@@ -20,7 +20,7 @@ def sharpe_ratio(returns: np.ndarray, freq: int = 252) -> float:
 
 def max_drawdown(returns: np.ndarray) -> float:
     """
-    Maximum Drawdown.
+    Maximum Drawdown (returned as positive number.)
 
     Params:
     returns: 1-D array of period returns
@@ -29,3 +29,18 @@ def max_drawdown(returns: np.ndarray) -> float:
     running_max = np.maximum.accumulate(equity_curve)
     drawdown = (equity_curve - running_max) / running_max
     return float(-np.min(drawdown))
+
+
+def calmar_ratio(returns: np.ndarray, freq: int = 252) -> float:
+    """
+    Calmar Ratio.
+
+    Params:
+    returns: 1-D array of returns.
+    freq:    periods per year - 252 daily, 52 weekly, 12 monthly
+    """
+    annualised_return = (1 + np.mean(returns)) ** freq - 1
+    md = max_drawdown(returns)
+    if md == 0:
+        return 0.0
+    return float(annualised_return / md)
