@@ -1,6 +1,7 @@
 """A snippet for risk metrics calculations. WIP."""
 
 import numpy as np
+from scipy.stats import kurtosis, norm, skew
 
 
 def sharpe_ratio(returns: np.ndarray, freq: int = 252) -> float:
@@ -62,3 +63,28 @@ def sortino_ratio(returns: np.ndarray, freq: int = 252) -> float:
     if downside_deviation == 0:
         return 0.0
     return float(annualised_return / downside_deviation)
+
+
+def deflated_sharpe_ratio(returns: np.ndarray, n_trials: int, freq: int = 252) -> float:
+    """
+    Deflated Sharpe Ratio.
+
+    Params:
+    returns:  1-D array of returns
+    n_trials: Number of independent trails
+    freq:     periods per year - 252 daily, 52 weekly, 12 monthly
+    """
+    expected_max_sr = (1 - 0.5772) * norm.ppf(1 - 1 / n_trials) + 0.5772 * norm.ppf(
+        1 - 1 / (n_trials * np.e)
+    )
+    sr = sharpe_ratio(returns, freq)
+    skewness = skew(returns)
+    excess_kurt = kurtosis(returns, fisher=True)
+
+    under_sqrt = (len(returns) - 1) / (
+        1 - skewness * sr + ((excess_kurt - 1) / 4) * sr**2
+    )
+    if under_sqrt <= 0:
+        return 0.0
+    sr_adjusted = sr * np.sqrt(under_sqrt)
+    return float(norm.cdf(sr_adjusted - expected_max_sr))
