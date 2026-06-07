@@ -29,3 +29,16 @@ def real_like_returns():
     """Realistic noisy returns with positive drift."""
     rng = np.random.default_rng(100)
     return rng.normal(loc=0.0005, scale=0.01, size=252)
+
+
+# --- sharpe_ratio ---
+def test_sharpe_zero_vol_returns_zero(flat_returns):
+    assert sharpe_ratio(flat_returns) == 0.0
+
+
+def test_sharpe_positive_returns_positive(positive_returns):
+    assert sharpe_ratio(positive_returns) > 0
+
+
+def test_sharpe_returns_float(real_like_returns):
+    assert isinstance(sharpe_ratio(real_like_returns), float)
