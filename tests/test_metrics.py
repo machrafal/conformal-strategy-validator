@@ -45,8 +45,6 @@ def test_sharpe_returns_float(real_like_returns):
 
 
 # --- max_drawdown ---
-
-
 def test_max_drawdown_zero_vol_returns_zero(flat_returns):
     assert max_drawdown(flat_returns) == 0.0
 
@@ -57,3 +55,16 @@ def test_max_drawdown_positive_returns_zero(positive_returns):
 
 def test_max_drawdown_returns_float(real_like_returns):
     assert isinstance(max_drawdown(real_like_returns), float)
+
+
+# --- calmar_ratio ---
+def test_calmar_ratio_zero_vol_returns_zero(flat_returns):
+    assert calmar_ratio(flat_returns) == 0.0
+
+
+def test_calmar_ratio_positive_returns_zero(positive_returns):
+    assert calmar_ratio(positive_returns) == 0.0
+
+
+def test_calmar_ratio_returns_float(real_like_returns):
+    assert isinstance(calmar_ratio(real_like_returns), float)
