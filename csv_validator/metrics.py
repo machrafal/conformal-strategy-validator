@@ -1,4 +1,4 @@
-"""A snippet for risk metrics calculations. WIP."""
+"""csv_validator/metrics.py — performance and risk metrics for strategy validation."""
 
 import numpy as np
 from scipy.stats import kurtosis, norm, skew
@@ -71,7 +71,7 @@ def deflated_sharpe_ratio(returns: np.ndarray, n_trials: int, freq: int = 252) -
 
     Params:
     returns:  1-D array of returns
-    n_trials: Number of independent trails
+    n_trials: Number of independent trials
     freq:     periods per year - 252 daily, 52 weekly, 12 monthly
     """
     expected_max_sr = (1 - 0.5772) * norm.ppf(1 - 1 / n_trials) + 0.5772 * norm.ppf(
