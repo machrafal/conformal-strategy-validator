@@ -84,7 +84,7 @@ def deflated_sharpe_ratio(returns: np.ndarray, n_trials: int, freq: int = 252) -
     under_sqrt = (len(returns) - 1) / (
         1 - skewness * sr + ((excess_kurt - 1) / 4) * sr**2
     )
-    if under_sqrt <= 0:
+    if under_sqrt <= 0 or np.isnan(under_sqrt):
         return 0.0
     sr_adjusted = sr * np.sqrt(under_sqrt)
     return float(norm.cdf(sr_adjusted - expected_max_sr))
