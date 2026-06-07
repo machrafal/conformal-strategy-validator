@@ -63,8 +63,21 @@ def test_calmar_ratio_zero_vol_returns_zero(flat_returns):
 
 
 def test_calmar_ratio_positive_returns_zero(positive_returns):
-    assert calmar_ratio(positive_returns) == 0.0
+    assert calmar_ratio(positive_returns) == 0
 
 
 def test_calmar_ratio_returns_float(real_like_returns):
     assert isinstance(calmar_ratio(real_like_returns), float)
+
+
+# --- sortino_ratio ---
+def test_sortino_ratio_zero_vol_returns_zero(flat_returns):
+    assert sortino_ratio(flat_returns) == 0.0
+
+
+def test_sortino_ratio_positive_returns_zero(positive_returns):
+    assert sortino_ratio(positive_returns) == 0
+
+
+def test_sortino_ratio_returns_float(real_like_returns):
+    assert isinstance(sortino_ratio(real_like_returns), float)
