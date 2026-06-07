@@ -42,3 +42,18 @@ def test_sharpe_positive_returns_positive(positive_returns):
 
 def test_sharpe_returns_float(real_like_returns):
     assert isinstance(sharpe_ratio(real_like_returns), float)
+
+
+# --- max_drawdown ---
+
+
+def test_max_drawdown_zero_vol_returns_zero(flat_returns):
+    assert max_drawdown(flat_returns) == 0.0
+
+
+def test_max_drawdown_positive_returns_zero(positive_returns):
+    assert max_drawdown(positive_returns) == 0.0
+
+
+def test_max_drawdown_returns_float(real_like_returns):
+    assert isinstance(max_drawdown(real_like_returns), float)
