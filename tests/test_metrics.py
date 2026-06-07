@@ -81,3 +81,17 @@ def test_sortino_ratio_positive_returns_zero(positive_returns):
 
 def test_sortino_ratio_returns_float(real_like_returns):
     assert isinstance(sortino_ratio(real_like_returns), float)
+
+
+# --- deflated_sharpe_ratio ---
+def test_deflated_sharpe_ratio_zero_vol_returns_zero(flat_returns):
+    assert deflated_sharpe_ratio(flat_returns, n_trials=50) == 0.0
+
+
+def test_deflated_sharpe_ratio_positive_returns_zero(real_like_returns):
+    result = deflated_sharpe_ratio(real_like_returns, n_trials=50)
+    assert 0.0 <= result <= 1.0
+
+
+def test_deflated_sharpe_ratio_returns_float(real_like_returns):
+    assert isinstance(deflated_sharpe_ratio(real_like_returns, n_trials=50), float)
