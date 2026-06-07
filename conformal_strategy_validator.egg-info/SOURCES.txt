@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+conformal_strategy_validator.egg-info/PKG-INFO
+conformal_strategy_validator.egg-info/SOURCES.txt
+conformal_strategy_validator.egg-info/dependency_links.txt
+conformal_strategy_validator.egg-info/requires.txt
+conformal_strategy_validator.egg-info/top_level.txt
+csv_validator/__init__.py
+csv_validator/conformal.py
+csv_validator/metrics.py
+csv_validator/pbo.py
+csv_validator/permutation.py
+csv_validator/regime.py
+csv_validator/report.py
+csv_validator/test.py
+tests/test_metric.py

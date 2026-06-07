@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "conformal-strategy-validator"
@@ -28,8 +28,8 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=csv --cov-report=term-missing"
+addopts = "--cov=csv_validator --cov-report=term-missing"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["csv_validator"]
+include = ["csv_validator*"]
