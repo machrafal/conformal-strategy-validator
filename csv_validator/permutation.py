@@ -73,6 +73,7 @@ def sign_flip_test(
 
 
 def _stationary_bootstrap_sample(returns, block_size, rng):
+    """Resample returns using the stationary bootstrap with geometric block lengths."""
     n = len(returns)
     p = 1.0 / block_size
     result = np.empty(n)
@@ -85,3 +86,41 @@ def _stationary_bootstrap_sample(returns, block_size, rng):
         start += 1
         i += 1
     return result
+
+
+def stationary_bootstrap_test(
+    returns: np.ndarray,
+    block_size: int = 10,
+    n_trials: int = 1000,
+    freq: int = 252,
+    seed: int = 100,
+) -> tuple[float, np.ndarray, float]:
+    """
+    Stationary bootstrap permutation test.
+
+    Resample blocks of returns of random length,
+    where block length follows a geometric distribution
+    with mean 1/p.
+
+    Params:
+    returns     : 1-D array of period returns
+    block_size  : mean block length for resampling (default 10)
+    n_trials    : number of shuffles
+    freq        : periods per year - 252 daily, 52 weekly, 12 monthly
+    seed        : random seed for reproducibility
+
+    Returns:
+    p_value             : fraction of null Sharpes >= observed Sharpe
+    null_distribution   : Sharpe ratios from shuffled series
+    observed_stat       : Sharpe ratio of original returns
+    """
+    rng = np.random.default_rng(seed)
+    observed_stat = sharpe_ratio(returns, freq)
+    null_distribution = np.empty(n_trials)
+
+    for i in range(n_trials):
+        shuffled = _stationary_bootstrap_sample(returns, block_size, rng)
+        null_distribution[i] = sharpe_ratio(shuffled, freq)
+
+    p_value = float(np.mean(null_distribution >= observed_stat))
+    return p_value, null_distribution, observed_stat
