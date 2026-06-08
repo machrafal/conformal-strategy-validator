@@ -55,7 +55,7 @@ def sign_flip_test(
     seed        : random seed for reproducibility
 
     Returns:
-    p_value            : fraction of null Sharpes >= observed Sharpe
+    p_value             : fraction of null Sharpes >= observed Sharpe
     null_distribution   : Sharpe ratios from shuffled series
     observed_stat       : Sharpe ratio of original returns
     """
@@ -70,3 +70,18 @@ def sign_flip_test(
 
     p_value = float(np.mean(null_distribution >= observed_stat))
     return p_value, null_distribution, observed_stat
+
+
+def _stationary_bootstrap_sample(returns, block_size, rng):
+    n = len(returns)
+    p = 1.0 / block_size
+    result = np.empty(n)
+    i = 0
+    start = rng.integers(0, n)
+    while i < n:
+        if rng.random() < p or i == 0:
+            start = rng.integers(0, n)
+        result[i] = returns[start % n]
+        start += 1
+        i += 1
+    return result
