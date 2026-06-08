@@ -37,3 +37,36 @@ def circular_shift_test(
 
     p_value = float(np.mean(null_distribution >= observed_stat))
     return p_value, null_distribution, observed_stat
+
+
+def sign_flip_test(
+    returns: np.ndarray, n_trials: int = 1000, freq: int = 252, seed: int = 100
+) -> tuple[float, np.ndarray, float]:
+    """
+    Sign flip permutation test.
+
+    Flips randomly the return signs n_trials times,
+    computing Sharpe on each shuffle to build a null distribution.
+
+    Params:
+    returns     : 1-D array of period returns
+    n_trials    : number of shuffles
+    freq        : periods per year - 252 daily, 52 weekly, 12 monthly
+    seed        : random seed for reproducibility
+
+    Returns:
+    p_value            : fraction of null Sharpes >= observed Sharpe
+    null_distribution   : Sharpe ratios from shuffled series
+    observed_stat       : Sharpe ratio of original returns
+    """
+    rng = np.random.default_rng(seed)
+    observed_stat = sharpe_ratio(returns, freq)
+    null_distribution = np.empty(n_trials)
+
+    for i in range(n_trials):
+        signs = rng.choice([-1, 1], size=len(returns))
+        shuffled = signs * returns
+        null_distribution[i] = sharpe_ratio(shuffled, freq)
+
+    p_value = float(np.mean(null_distribution >= observed_stat))
+    return p_value, null_distribution, observed_stat
