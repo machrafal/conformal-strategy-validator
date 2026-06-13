@@ -1,6 +1,6 @@
-import numpy as np
+"""csv_validator/conformal.py - conformal prediction intervals for strategy validation."""
 
-from csv_validator.metrics import sharpe_ratio
+import numpy as np
 
 
 class SplitConformalValidator:
@@ -29,8 +29,6 @@ class SplitConformalValidator:
         return float(self._mu - q), float(self._mu + q)
 
     def coverage(self, test_returns: np.ndarray, alpha: float = 0.1) -> float:
-        # for each test return, check if it falls inside predict_intreval(alpha)
-        # return fraction that are covered
         lower, upper = self.predict_interval(alpha)
         coverage = (test_returns >= lower) & (test_returns <= upper)
         return float(np.mean(coverage))
