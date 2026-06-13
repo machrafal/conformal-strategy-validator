@@ -11,19 +11,26 @@ class SplitConformalValidator:
     def fit(self, calibration_returns: np.ndarray) -> "SplitConformalValidator":
         self._mu = np.mean(calibration_returns)
         self._scores = np.abs(calibration_returns - self._mu)
-        return self # return self so you can chain validator.fit(cal).predict_interval(0.1)
-    
-    def predict_interval(self, alpha:float=0.1)->tuple[float,float]:
+        return self  # return self so you can chain validator.fit(cal).predict_interval(0.1)
+
+    def predict_interval(self, alpha: float = 0.1) -> tuple[float, float]:
+        """
+        Prediction interval at significance level alpha.
+
+        Params:
+        alpha: significance level (default 0.1 gives 90% coverage)
+
+        Returns:
+        (lower, upper) bounds of the prediction interval.
+        """
         if self._scores is None:
             raise RuntimeError("Call fit() before predict_interval().")
-        q = np.quantile(self._scores,1-alpha)
-        return float(self._mu - q), float(self._mu+q)
+        q = np.quantile(self._scores, 1 - alpha)
+        return float(self._mu - q), float(self._mu + q)
 
-        
-    def coverage(self, test_returns:np.ndarray,alpha:float=0.1)->float:
+    def coverage(self, test_returns: np.ndarray, alpha: float = 0.1) -> float:
         # for each test return, check if it falls inside predict_intreval(alpha)
         # return fraction that are covered
-        # ...
-        
-
-        
+        lower, upper = self.predict_interval(alpha)
+        coverage = (test_returns >= lower) & (test_returns <= upper)
+        return float(np.mean(coverage))
