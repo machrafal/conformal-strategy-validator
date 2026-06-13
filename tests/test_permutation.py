@@ -1,4 +1,4 @@
-"""tests/conftest.py - unit tests for csv_validator/permutation.py"""
+"""tests/test_permutation.py - unit tests for csv_validator/permutation.py"""
 
 from csv_validator.metrics import sharpe_ratio
 from csv_validator.permutation import (
