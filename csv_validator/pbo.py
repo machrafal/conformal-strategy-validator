@@ -28,3 +28,29 @@ def generate_cpcv_splits(n_obs, n_groups=6, n_test_groups=2, embargo=5):
 
         splits.append((np.array(purged_train), test_idx))
     return splits
+
+
+def probability_of_backtest_overfitting(is_sharpes, oos_sharpes):
+    """
+    is_sharpes, oos_sharpes: 2D arrays of shape (n_splits, n_strategies).
+    Returns PBO score.
+    """
+    n_splits, n_strategies = is_sharpes.shape
+    logits = []
+
+    for split in range(n_splits):
+        # find a strategy that ranked best in-sample
+        best_is_idx = np.argmax(is_sharpes[split])
+
+        # rank that strategy's OOS performance among all strategies
+        oos_ranks = np.argsort(np.argsort(oos_sharpes[split])) + 1  # rank 1 = worst
+        omega = oos_ranks[best_is_idx] / (n_strategies + 1)
+
+        # avoid log(0) or log(inf)
+        omega = np.clip(omega, 1e-6, 1 - 1e-6)
+        logit = np.log(omega / (1 - omega))
+        logits.append(logit)
+
+    logits = np.array(logits)
+    pbo = float(np.mean(logits < 0))
+    return pbo
