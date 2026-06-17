@@ -15,3 +15,12 @@ def test_train_and_test_indices_never_overlap():
     for train_idx, test_idx in splits:
         overlap = np.intersect1d(train_idx, test_idx)
         assert len(overlap) == 0
+
+
+def test_probability_of_backtest_overfitting_returns_between_0_and_1():
+    rng = np.random.default_rng(100)
+    n_splits, n_strategies = 15, 20
+    is_sharpes = rng.normal(size=(n_splits, n_strategies))
+    oos_sharpes = rng.normal(size=(n_splits, n_strategies))
+    pbo = probability_of_backtest_overfitting(is_sharpes, oos_sharpes)
+    assert 0 <= pbo <= 1
