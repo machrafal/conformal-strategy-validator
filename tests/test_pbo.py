@@ -34,3 +34,12 @@ def test_is_best_always_oos_best():
     oos_sharpes = is_sharpes.copy()
     pbo = probability_of_backtest_overfitting(is_sharpes, oos_sharpes)
     assert math.isclose(pbo, 0)
+
+
+def test_is_best_always_oos_worst():
+    rng = np.random.default_rng(100)
+    n_splits, n_strategies = 15, 20
+    is_sharpes = rng.normal(size=(n_splits, n_strategies))
+    oos_sharpes = -is_sharpes.copy()
+    pbo = probability_of_backtest_overfitting(is_sharpes, oos_sharpes)
+    assert math.isclose(pbo, 1)
