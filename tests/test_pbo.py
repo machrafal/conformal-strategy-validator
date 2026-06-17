@@ -13,5 +13,5 @@ def test_generate_cpcv_splits_returns_c_splits():
 def test_train_and_test_indices_never_overlap():
     splits = generate_cpcv_splits(n_obs=120, n_groups=6, n_test_groups=2, embargo=5)
     for train_idx, test_idx in splits:
-        overlap = np.lintersect1d(train_idx, test_idx)
+        overlap = np.intersect1d(train_idx, test_idx)
         assert len(overlap) == 0
