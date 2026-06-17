@@ -1,6 +1,7 @@
 """tests/test_pbo.py - unit tests for csv_validator/pbo.py"""
 
 import numpy as np
+import math
 
 from csv_validator.pbo import generate_cpcv_splits, probability_of_backtest_overfitting
 
@@ -24,3 +25,12 @@ def test_probability_of_backtest_overfitting_returns_between_0_and_1():
     oos_sharpes = rng.normal(size=(n_splits, n_strategies))
     pbo = probability_of_backtest_overfitting(is_sharpes, oos_sharpes)
     assert 0 <= pbo <= 1
+
+
+def test_is_best_always_oos_best():
+    rng = np.random.default_rng(100)
+    n_splits, n_strategies = 15, 20
+    is_sharpes = rng.normal(size=(n_splits, n_strategies))
+    oos_sharpes = is_sharpes.copy()
+    pbo = probability_of_backtest_overfitting(is_sharpes, oos_sharpes)
+    assert math.isclose(pbo, 0)
