@@ -4,7 +4,7 @@ import numpy as np
 
 
 def generate_cpcv_splits(n_obs, n_groups=6, n_test_groups=2, embargo=5):
-    """Generate (train_idx, tes_idx) pairs for all C(n_groups, n_test_groups) combinations."""
+    """Generate (train_idx, test_idx) pairs for all C(n_groups, n_test_groups) combinations."""
     group_bounds = np.linspace(0, n_obs, n_groups + 1, dtype=int)
     groups = [np.arange(group_bounds[i], group_bounds[i + 1]) for i in range(n_groups)]
 
