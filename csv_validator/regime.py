@@ -1,3 +1,5 @@
+"""cvs_validator/regime.py - Bayesian changepoint detection and conformal kill switch."""
+
 import numpy as np
 from scipy.special import logsumexp
 from scipy.stats import t as student_t
@@ -23,7 +25,7 @@ class BOCPDDetector:
 
     def _log_predictive(self, x: float) -> np.ndarray:
         df = 2 * self._alpha
-        loc = self.mu
+        loc = self._mu
         scale = np.sqrt(self._beta * (self._kappa + 1) / (self._alpha * self._kappa))
         return student_t.logpdf(x, df=df, loc=loc, scale=scale)
 
@@ -31,7 +33,7 @@ class BOCPDDetector:
         # for each existing run, update the NIG posterior
         kappa_new = self._kappa + 1
         mu_new = (self._kappa * self._mu + x) / kappa_new
-        alpha_new = self._alhpa + 0.5
+        alpha_new = self._alpha + 0.5
         beta_new = self._beta + (self._kappa * (x - self._mu) ** 2) / (2 * kappa_new)
 
         # prepend fresh prior for run length 0 (new regime)
