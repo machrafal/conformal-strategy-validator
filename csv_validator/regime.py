@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.special import logsumexp
+from scipy.stats import t as student_t
 
 
 class BOCPDDetector:
@@ -19,6 +20,12 @@ class BOCPDDetector:
         self._kappa = np.array([kappa0])
         self._alpha = np.array([alpha0])
         self._beta = np.array([beta0])
+
+    def _log_predictive(self, x: float) -> np.ndarray:
+        df = 2 * self._alpha
+        loc = self.mu
+        scale = np.sqrt(self._beta * (self._kappa + 1) / (self._alpha * self._kappa))
+        return student_t.logpdf(x, df=df, loc=loc, scale=scale)
 
     def update(self, x: float) -> float:
         # 1. Compute log predictive probability for each current run length
