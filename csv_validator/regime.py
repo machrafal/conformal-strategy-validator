@@ -1,4 +1,4 @@
-"""cvs_validator/regime.py - Bayesian changepoint detection and conformal kill switch."""
+"""csv_validator/regime.py - Bayesian changepoint detection and conformal kill switch."""
 
 import numpy as np
 from scipy.special import logsumexp
