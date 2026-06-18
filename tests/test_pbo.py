@@ -1,7 +1,7 @@
 """tests/test_pbo.py - unit tests for csv_validator/pbo.py"""
 
 import numpy as np
-import pytest
+
 
 from csv_validator.pbo import generate_cpcv_splits, probability_of_backtest_overfitting
 
