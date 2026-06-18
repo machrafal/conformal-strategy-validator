@@ -27,6 +27,20 @@ class BOCPDDetector:
         scale = np.sqrt(self._beta * (self._kappa + 1) / (self._alpha * self._kappa))
         return student_t.logpdf(x, df=df, loc=loc, scale=scale)
 
+    def _update_params(self, x: float):
+        # for each existing run, update the NIG posterior
+        kappa_new = self._kappa + 1
+        mu_new = (self._kappa * self._mu + x) / kappa_new
+        alpha_new = self._alhpa + 0.5
+        beta_new = self._beta + (self._kappa * (x - self._mu) ** 2) / (2 * kappa_new)
+
+        # prepend fresh prior for run length 0 (new regime)
+        self._n = np.concatenate([[0], self._n + 1])
+        self._mu = np.concatenate([[self.mu0], mu_new])
+        self._kappa = np.concatenate([[self.kappa0], kappa_new])
+        self._alpha = np.concatenate([[self.alpha0], alpha_new])
+        self._beta = np.concatenate([[self.beta0], beta_new])
+
     def update(self, x: float) -> float:
         # 1. Compute log predictive probability for each current run length
         log_pred = self._log_predictive(x)
