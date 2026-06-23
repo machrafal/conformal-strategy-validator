@@ -23,6 +23,13 @@ class BOCPDDetector:
         self._alpha = np.array([alpha0])
         self._beta = np.array([beta0])
 
+    def changepoint_score(self, recent_window: int = 10) -> float:
+        """
+        Probability that a changepoint occured within the last 'recent_window' steps.
+        """
+        probs = np.exp(self._log_probs)
+        return float(np.sum(probs[:recent_window]))
+
     def _log_predictive(self, x: float) -> np.ndarray:
         df = 2 * self._alpha
         loc = self._mu
