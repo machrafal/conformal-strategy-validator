@@ -4,6 +4,8 @@ import numpy as np
 from scipy.special import logsumexp
 from scipy.stats import t as student_t
 
+from csv_validator.conformal import AdaptiveConformalValidator
+
 
 class BOCPDDetector:
     def __init__(
@@ -74,3 +76,28 @@ class BOCPDDetector:
 
         # 8. Return changepoint probability
         return float(np.exp(self._log_probs[0]))
+
+
+class ConformalKillSwitch:
+    def __init__(
+        self,
+        bocpd: BOCPDDetector,
+        validator: AdaptiveConformalValidator,
+        cp_threshold: float = 0.5,
+        coverage_threshold: float = 0.85,
+    ):
+        self.bocpd = bocpd
+        self.validator = validator
+        self.cp_threshold = cp_threshold
+        self.coverage_threshold = coverage_threshold
+
+    def update(self, x: float, recent_returns: np.ndarray) -> bool:
+        """
+        Returns TRUE kill signal when BOTH:
+        - BOCPD changepoint score > cp_threshold
+        - Conformal coverage of recent_returns < coverage_threshold
+        """
+        self.bocpd.update(x)
+        cp_score = self.bocpd.changepoint_score()
+        coverage = self.validator.coverage(recent_returns)
+        return bool(cp_score > self.cp_threshold and coverage < self.coverage_threshold)
