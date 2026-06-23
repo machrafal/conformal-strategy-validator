@@ -25,7 +25,6 @@ def test_regime_shift():
     rng = np.random.default_rng(100)
     regime1 = rng.normal(loc=0.0, scale=0.001, size=200)
     regime2 = rng.normal(loc=0.05, scale=0.05, size=100)
-    returns = np.concatenate([regime1, regime2])
 
     detector = BOCPDDetector(hazard_rate=1 / 50, beta0=0.0001)
     validator = AdaptiveConformalValidator()
