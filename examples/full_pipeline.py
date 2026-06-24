@@ -1,0 +1,31 @@
+# %% [markdown]
+# # Conformal Strategy Validator - Full Pipeline Demo
+#
+# This example runs a complete validation on two synthetic strategies:
+# - Strategy A: genuine edge (positive drift, consistent)
+# - Strategy B: no edge (pure noise, similar Sharpe by luck)
+#
+# The validator should distinguish between them.
+
+# %% Imports
+import numpy as np
+import matplotlib.pyplot as plt
+from csv_validator.report import validate
+
+# %% Generate strategies
+rng = np.random.default_rng(100)
+
+# Strategy A: real edge - consistent positive drift
+strategy_a = rng.normal(loc=0.0008, scale=0.01, size=504)
+
+# Strategy B: no edge - noise, similar mean by luck
+strategy_b = rng.normal(loc=0.0001, scale=0.015, size=504)
+
+# %% Run validation
+print("Validating Strategy A...")
+report_a = validate(strategy_a, n_trials=50)
+print(report_a.summary())
+
+print("\nValidating Strategy B...")
+report_b = validate(strategy_b, n_trials=50)
+print(report_b.summary())
