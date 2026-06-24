@@ -51,3 +51,26 @@ class ValidationReport:
             f"Kill signal:           {self.kill_signal}",
         ]
         return "\n".join(lines)
+
+    def validate(
+        returns: np.ndarray,
+        n_trials: int = 50,
+        freq: int = 252,
+        n_groups: int = 6,
+        n_test_groups: int = 2,
+        embargo: int = 5,
+    ) -> ValidationReport:
+        """
+        Run the full validation pipeline on a return series.
+
+        Params:
+        returns         : 1-D array of period returns
+        n_trials        : number of strategies tested (for DSR)
+        freq            : periods per year
+        n_groups        : CPCV groups
+        n_test_groups   : CPCV test groups
+        embargo         : CPCV embargo period
+
+        Returns:
+        ValidationReport with all results populated
+        """
