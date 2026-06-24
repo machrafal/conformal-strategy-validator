@@ -40,6 +40,8 @@ class AdaptiveConformalValidator:
     ) -> tuple[np.ndarray, np.ndarray]:
         lower = np.full(len(returns), np.nan)
         upper = np.full(len(returns), np.nan)
+        if len(returns) < window:
+            return lower, upper
         for t in range(window, len(returns)):
             window_returns = returns[t - window : t]
             mu = np.mean(window_returns)
@@ -52,7 +54,11 @@ class AdaptiveConformalValidator:
     def coverage(
         self, returns: np.ndarray, alpha: float = 0.1, window: int = 50
     ) -> float:
+        if len(returns) < window:
+            return float("nan")
         lower, upper = self.fit_transform(returns, alpha, window)
         valid = ~np.isnan(lower)
+        if not np.any(valid):
+            return float("nan")
         covered = (returns[valid] >= lower[valid]) & (returns[valid] <= upper[valid])
         return float(np.mean(covered))
