@@ -1,3 +1,5 @@
+"""csv_validator/report.py — unified validation report and pipeline entry point."""
+
 from dataclasses import dataclass
 
 import numpy as np
@@ -118,3 +120,29 @@ def validate(
 
     adapt_val = AdaptiveConformalValidator()
     report.adaptive_coverage = adapt_val.coverage(returns)
+
+    # 4. PBO - needs multiple strategy variations
+    # generate synthetic variations by adding noise to the returns
+    # this is a simplification
+    rng = np.random.default_rng(100)
+    n_strategies = n_trials
+    is_sharpes = np.zeros((15, n_strategies))
+    oos_sharpes = np.zeros((15, n_strategies))
+    splits = generate_cpcv_splits(len(returns), n_groups, n_test_groups, embargo)
+    for s_idx, (train, test) in enumerate(splits[:15]):
+        for strat in range(n_strategies):
+            noise = rng.normal(0, 0.001, size=len(returns))
+            r_strat = returns + noise
+            if len(train) > 0:
+                is_sharpes[s_idx, strat] = sharpe_ratio(r_strat[train], freq)
+            if len(test) > 0:
+                oos_sharpes[s_idx, strat] = sharpe_ratio(r_strat[test], freq)
+    report.pbo = probability_of_backtest_overfitting(is_sharpes, oos_sharpes)
+
+    # 5. Regime
+    detector = BOCPDDetector(hazard_rate=1 / 250, beta0=0.0001)
+    for r in returns:
+        detector.update(r)
+    report.final_cp_score = detector.changepoint_score()
+
+    return report
